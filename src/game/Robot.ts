@@ -208,7 +208,6 @@ export class Robot {
     this.velocity = distance > 0 ? 100 : -100;
     return new Promise((resolve) => {
       const checkDistance = () => {
-        console.log("checkDistance", distance);
         if (Math.abs(distance) <= 0) {
           this.velocity = 0;
           resolve();
