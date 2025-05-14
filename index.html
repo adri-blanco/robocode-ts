@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Robocode JS</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Robocode JS</h1>
+        <div class="controls">
+          <button id="startBattle">Start Battle</button>
+          <button id="pauseBattle">Pause</button>
+          <button id="resetBattle">Reset</button>
+        </div>
+      </header>
+      <main>
+        <div class="battlefield">
+          <canvas id="gameCanvas"></canvas>
+        </div>
+        <div class="sidebar">
+          <div class="robot-stats">
+            <h2>Robot Stats</h2>
+            <div id="robotList"></div>
+          </div>
+          <div class="code-editor">
+            <h2>Robot Code</h2>
+            <div id="editor"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
+    <script type="module" src="dist/main.js"></script>
+  </body>
+</html>

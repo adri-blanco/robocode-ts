@@ -1,0 +1,29 @@
+{
+  "name": "robocode-js",
+  "version": "1.0.0",
+  "description": "A JavaScript implementation of Robocode",
+  "type": "module",
+  "scripts": {
+    "start": "npm run build && http-server",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "concurrently \"npm run watch\" \"http-server -p 8085\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "robocode",
+    "javascript",
+    "game",
+    "programming"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "concurrently": "^8.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
