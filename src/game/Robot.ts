@@ -41,6 +41,7 @@ export class Robot {
 
   // AI script context
   public script: RobotAI | null = null;
+  public inMotion: boolean = false;
 
   constructor(name: string, config: RobotConfig) {
     this.name = name;
@@ -105,9 +106,11 @@ export class Robot {
     );
 
     // Execute AI script if available
-    if (this.script) {
+    if (this.script && !this.inMotion) {
       try {
+        this.inMotion = true;
         await this.script.tick(deltaTime);
+        this.inMotion = false;
       } catch (error) {
         console.error(`Error in robot ${this.name} script:`, error);
       }
@@ -206,15 +209,27 @@ export class Robot {
   // Robot API methods
   public async ahead(distance: number): Promise<void> {
     this.velocity = distance > 0 ? 100 : -100;
+    let remainingDistance = distance;
+    let lastTime = performance.now();
     return new Promise((resolve) => {
       const checkDistance = () => {
-        if (Math.abs(distance) <= 0) {
+        const currentTime = performance.now();
+        const deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
+        const step = this.velocity * (deltaTime / 1000);
+        remainingDistance -= step;
+
+        // Check if we've overshot
+        if (
+          (distance > 0 && remainingDistance < 0) ||
+          (distance < 0 && remainingDistance > 0)
+        ) {
           this.velocity = 0;
           resolve();
-        } else {
-          distance -= this.velocity * (1 / 60);
-          requestAnimationFrame(checkDistance);
+          return;
         }
+        requestAnimationFrame(checkDistance);
       };
       checkDistance();
     });
