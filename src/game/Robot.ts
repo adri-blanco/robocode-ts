@@ -126,6 +126,7 @@ export class Robot {
     // Update angles
     this._angle += this._turnRate * (deltaTime / 1000);
     this._angle = this.normalizeAngle(this._angle);
+    this._gunAngle = this._angle;
 
     // Update radar angle
     this._radarAngle += this._radarTurnRate * (deltaTime / 1000);
@@ -322,18 +323,34 @@ export class Robot {
   }
 
   public async turnRadarLeft(degrees: number): Promise<void> {
-    return this.turnRadarRight(-degrees);
+    this._radarTurnRate = -180; // 180 degrees per second
+    return new Promise((resolve) => {
+      const targetAngle = this.normalizeAngle(this._radarAngle - degrees);
+      const checkAngle = () => {
+        if (Math.abs(this._radarAngle - targetAngle) <= 1) {
+          this._radarTurnRate = 0;
+          this._radarAngle = targetAngle;
+          resolve();
+        } else {
+          requestAnimationFrame(checkAngle);
+        }
+      };
+      checkAngle();
+    });
   }
 
   public fire(power: number): void {
-    console.log("Firing", power);
     const now = Date.now();
-    if (this._energy >= power * 10 && now - this.lastShot >= this.gunCooldown) {
-      const bullet = new Bullet(this, power);
+    if (now - this.lastShot < this.gunCooldown || power < 0) {
+      return;
+    }
+
+    if (this._energy >= power) {
+      const bullet = new Bullet(this, power / 10);
       if (this.game) {
         this.game.addBullet(bullet);
       }
-      this._energy -= power * 10;
+      this._energy -= power;
       this.lastShot = now;
     } else {
       console.log("Not enough energy to fire");
