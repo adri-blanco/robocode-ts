@@ -19,6 +19,7 @@ export class Robot {
   private _gunAngle: number;
   private _radarAngle: number;
   private _radarTurnRate: number = 0;
+  private _gunTurnRate: number = 0;
   public scannedRobots: ScannedRobotInfo[] = [];
 
   // Getters for private properties
@@ -126,7 +127,10 @@ export class Robot {
     // Update angles
     this._angle += this._turnRate * (deltaTime / 1000);
     this._angle = this.normalizeAngle(this._angle);
-    this._gunAngle = this._angle;
+
+    // Update gun angle
+    this._gunAngle += this._gunTurnRate * (deltaTime / 1000);
+    this._gunAngle = this.normalizeAngle(this._gunAngle);
 
     // Update radar angle
     this._radarAngle += this._radarTurnRate * (deltaTime / 1000);
@@ -330,6 +334,40 @@ export class Robot {
         if (Math.abs(this._radarAngle - targetAngle) <= 1) {
           this._radarTurnRate = 0;
           this._radarAngle = targetAngle;
+          resolve();
+        } else {
+          requestAnimationFrame(checkAngle);
+        }
+      };
+      checkAngle();
+    });
+  }
+
+  public async turnGunRight(degrees: number): Promise<void> {
+    this._gunTurnRate = 180; // 180 degrees per second
+    return new Promise((resolve) => {
+      const targetAngle = this.normalizeAngle(this._gunAngle + degrees);
+      const checkAngle = () => {
+        if (Math.abs(this._gunAngle - targetAngle) <= 1) {
+          this._gunTurnRate = 0;
+          this._gunAngle = targetAngle;
+          resolve();
+        } else {
+          requestAnimationFrame(checkAngle);
+        }
+      };
+      checkAngle();
+    });
+  }
+
+  public async turnGunLeft(degrees: number): Promise<void> {
+    this._gunTurnRate = -180; // 180 degrees per second
+    return new Promise((resolve) => {
+      const targetAngle = this.normalizeAngle(this._gunAngle - degrees);
+      const checkAngle = () => {
+        if (Math.abs(this._gunAngle - targetAngle) <= 1) {
+          this._gunTurnRate = 0;
+          this._gunAngle = targetAngle;
           resolve();
         } else {
           requestAnimationFrame(checkAngle);
