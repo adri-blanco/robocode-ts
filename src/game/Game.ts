@@ -185,8 +185,8 @@ export class Game implements GameType {
       robotB.resetToStoredPosition();
 
       // Stop both robots
-      robotA.velocity = 0;
-      robotB.velocity = 0;
+      robotA.stop();
+      robotB.stop();
 
       // Create collision effect
       this.createCollisionEffect(
@@ -273,24 +273,29 @@ export class Game implements GameType {
       robot.y + robot.radius > this.canvas.height;
 
     if (hitWall) {
-      // Determine which wall was hit
+      // Determine which wall was hit and adjust position
+      let newX = robot.x;
+      let newY = robot.y;
+
       if (robot.x - robot.radius < 0) {
-        robot.x = robot.radius;
+        newX = robot.radius;
         robot.onHitWall("left");
       } else if (robot.x + robot.radius > this.canvas.width) {
-        robot.x = this.canvas.width - robot.radius;
+        newX = this.canvas.width - robot.radius;
         robot.onHitWall("right");
       }
 
       if (robot.y - robot.radius < 0) {
-        robot.y = robot.radius;
+        newY = robot.radius;
         robot.onHitWall("top");
       } else if (robot.y + robot.radius > this.canvas.height) {
-        robot.y = this.canvas.height - robot.radius;
+        newY = this.canvas.height - robot.radius;
         robot.onHitWall("bottom");
       }
 
-      robot.velocity = 0;
+      // Update position and stop the robot
+      robot.setPosition(newX, newY);
+      robot.stop();
     }
   }
 

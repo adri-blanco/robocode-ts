@@ -38,22 +38,22 @@ export interface Bullet {
 
 export interface Robot {
   name: string;
-  x: number;
-  y: number;
-  angle: number;
-  color: string;
-  health: number;
-  energy: number;
-  velocity: number;
-  turnRate: number;
-  gunAngle: number;
-  radarAngle: number;
-  radarTurnRate: number;
-  radarWidth: number;
-  radarRange: number;
-  maxHealth: number;
-  maxEnergy: number;
-  radius: number;
+  readonly x: number;
+  readonly y: number;
+  readonly angle: number;
+  readonly color: string;
+  readonly health: number;
+  readonly energy: number;
+  readonly velocity: number;
+  readonly turnRate: number;
+  readonly gunAngle: number;
+  readonly radarAngle: number;
+  readonly radarTurnRate: number;
+  readonly radarWidth: number;
+  readonly radarRange: number;
+  readonly maxHealth: number;
+  readonly maxEnergy: number;
+  readonly radius: number;
   game: Game | null;
   script: RobotAI | null;
 
@@ -65,7 +65,7 @@ export interface Robot {
   fire(power: number): void;
   scan(): ScannedRobotInfo[];
   damage(amount: number): void;
-  update(deltaTime: number): void;
+  update(deltaTime: number): Promise<void>;
   render(ctx: CanvasRenderingContext2D): void;
   reset(): void;
   onHit(): void;

@@ -7,7 +7,6 @@ export class HunterAI implements RobotAI {
   private readonly scanInterval: number;
 
   constructor(robot: Robot) {
-    console.log("🚀 ~ HunterAI ~ constructor ~ robot:", robot);
     this.robot = robot;
     this.target = null;
     this.lastScanTime = 0;

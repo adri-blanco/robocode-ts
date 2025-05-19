@@ -8,18 +8,53 @@ import {
 
 export class Robot {
   public name: string;
-  public x: number;
-  public y: number;
-  public angle: number;
-  public color: string;
-  public health: number;
-  public energy: number;
-  public velocity: number = 0;
-  public turnRate: number = 0;
-  public gunAngle: number;
-  public radarAngle: number;
-  public radarTurnRate: number = 0;
+  private _x: number;
+  private _y: number;
+  private _angle: number;
+  private _color: string;
+  private _health: number;
+  private _energy: number;
+  private _velocity: number = 0;
+  private _turnRate: number = 0;
+  private _gunAngle: number;
+  private _radarAngle: number;
+  private _radarTurnRate: number = 0;
   public scannedRobots: ScannedRobotInfo[] = [];
+
+  // Getters for private properties
+  public get x(): number {
+    return this._x;
+  }
+  public get y(): number {
+    return this._y;
+  }
+  public get angle(): number {
+    return this._angle;
+  }
+  public get color(): string {
+    return this._color;
+  }
+  public get health(): number {
+    return this._health;
+  }
+  public get energy(): number {
+    return this._energy;
+  }
+  public get velocity(): number {
+    return this._velocity;
+  }
+  public get turnRate(): number {
+    return this._turnRate;
+  }
+  public get gunAngle(): number {
+    return this._gunAngle;
+  }
+  public get radarAngle(): number {
+    return this._radarAngle;
+  }
+  public get radarTurnRate(): number {
+    return this._radarTurnRate;
+  }
 
   // Constants
   public readonly radius: number = 20;
@@ -45,38 +80,38 @@ export class Robot {
 
   constructor(name: string, config: RobotConfig) {
     this.name = name;
-    this.x = config.x;
-    this.y = config.y;
-    this.angle = config.angle;
-    this.color = config.color;
-    this.health = this.maxHealth;
-    this.energy = this.maxEnergy;
-    this.gunAngle = this.angle;
-    this.radarAngle = this.angle;
-    this.prevX = this.x;
-    this.prevY = this.y;
+    this._x = config.x;
+    this._y = config.y;
+    this._angle = config.angle;
+    this._color = config.color;
+    this._health = this.maxHealth;
+    this._energy = this.maxEnergy;
+    this._gunAngle = this._angle;
+    this._radarAngle = this._angle;
+    this.prevX = this._x;
+    this.prevY = this._y;
   }
 
   public reset(): void {
-    this.health = this.maxHealth;
-    this.energy = this.maxEnergy;
-    this.velocity = 0;
-    this.turnRate = 0;
-    this.gunAngle = this.angle;
-    this.radarAngle = this.angle;
-    this.radarTurnRate = 0;
+    this._health = this.maxHealth;
+    this._energy = this.maxEnergy;
+    this._velocity = 0;
+    this._turnRate = 0;
+    this._gunAngle = this._angle;
+    this._radarAngle = this._angle;
+    this._radarTurnRate = 0;
     this.scannedRobots = [];
     this.collisionCooldown = 0;
     this.lastCollision = null;
   }
 
   public damage(amount: number): void {
-    this.health = Math.max(0, this.health - amount);
+    this._health = Math.max(0, this._health - amount);
     this.onHit();
   }
 
   public async update(deltaTime: number): Promise<void> {
-    if (this.health <= 0) return;
+    if (this._health <= 0) return;
 
     // Update collision cooldown
     if (this.collisionCooldown > 0) {
@@ -84,25 +119,25 @@ export class Robot {
     }
 
     // Update position based on velocity
-    const radians = (this.angle * Math.PI) / 180;
-    this.x += Math.cos(radians) * this.velocity * (deltaTime / 1000);
-    this.y += Math.sin(radians) * this.velocity * (deltaTime / 1000);
+    const radians = (this._angle * Math.PI) / 180;
+    this._x += Math.cos(radians) * this._velocity * (deltaTime / 1000);
+    this._y += Math.sin(radians) * this._velocity * (deltaTime / 1000);
 
     // Update angles
-    this.angle += this.turnRate * (deltaTime / 1000);
-    this.angle = this.normalizeAngle(this.angle);
+    this._angle += this._turnRate * (deltaTime / 1000);
+    this._angle = this.normalizeAngle(this._angle);
 
     // Update radar angle
-    this.radarAngle += this.radarTurnRate * (deltaTime / 1000);
-    this.radarAngle = this.normalizeAngle(this.radarAngle);
+    this._radarAngle += this._radarTurnRate * (deltaTime / 1000);
+    this._radarAngle = this.normalizeAngle(this._radarAngle);
 
     // Perform radar scan
     this.scan();
 
     // Regenerate energy
-    this.energy = Math.min(
+    this._energy = Math.min(
       this.maxEnergy,
-      this.energy + (deltaTime / 1000) * 10
+      this._energy + (deltaTime / 1000) * 10
     );
 
     // Execute AI script if available
@@ -118,13 +153,13 @@ export class Robot {
   }
 
   public render(ctx: CanvasRenderingContext2D): void {
-    if (this.health <= 0) return;
+    if (this._health <= 0) return;
 
     ctx.save();
 
     // Draw tank body
-    ctx.translate(this.x, this.y);
-    ctx.rotate((this.angle * Math.PI) / 180);
+    ctx.translate(this._x, this._y);
+    ctx.rotate((this._angle * Math.PI) / 180);
 
     // Add collision effect if recently collided
     if (this.collisionCooldown > 0) {
@@ -132,7 +167,7 @@ export class Robot {
       ctx.shadowBlur = 10;
     }
 
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = this._color;
     ctx.strokeStyle = "#2c3e50";
     ctx.lineWidth = 2;
 
@@ -146,7 +181,7 @@ export class Robot {
     );
 
     // Gun
-    ctx.rotate(((this.gunAngle - this.angle) * Math.PI) / 180);
+    ctx.rotate(((this._gunAngle - this._angle) * Math.PI) / 180);
     ctx.fillStyle = "#34495e";
     ctx.fillRect(0, -4, this.radius * 1.5, 8);
 
@@ -158,11 +193,11 @@ export class Robot {
     // Draw health bar
     const healthBarWidth = this.radius * 2;
     const healthBarHeight = 4;
-    const healthBarY = this.y - this.radius - 10;
+    const healthBarY = this._y - this.radius - 10;
 
     ctx.fillStyle = "#e74c3c";
     ctx.fillRect(
-      this.x - healthBarWidth / 2,
+      this._x - healthBarWidth / 2,
       healthBarY,
       healthBarWidth,
       healthBarHeight
@@ -170,17 +205,17 @@ export class Robot {
 
     ctx.fillStyle = "#2ecc71";
     ctx.fillRect(
-      this.x - healthBarWidth / 2,
+      this._x - healthBarWidth / 2,
       healthBarY,
-      healthBarWidth * (this.health / this.maxHealth),
+      healthBarWidth * (this._health / this.maxHealth),
       healthBarHeight
     );
   }
 
   private renderRadar(ctx: CanvasRenderingContext2D): void {
     ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate((this.radarAngle * Math.PI) / 180);
+    ctx.translate(this._x, this._y);
+    ctx.rotate((this._radarAngle * Math.PI) / 180);
 
     // Draw radar cone
     ctx.beginPath();
@@ -195,11 +230,11 @@ export class Robot {
     ctx.closePath();
 
     // Fill with semi-transparent color
-    ctx.fillStyle = `${this.color}33`;
+    ctx.fillStyle = `${this._color}33`;
     ctx.fill();
 
     // Draw radar outline
-    ctx.strokeStyle = this.color;
+    ctx.strokeStyle = this._color;
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -208,7 +243,7 @@ export class Robot {
 
   // Robot API methods
   public async ahead(distance: number): Promise<void> {
-    this.velocity = distance > 0 ? 100 : -100;
+    this._velocity = distance > 0 ? 100 : -100;
     let remainingDistance = distance;
     let lastTime = performance.now();
     return new Promise((resolve) => {
@@ -217,7 +252,7 @@ export class Robot {
         const deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 
-        const step = this.velocity * (deltaTime / 1000);
+        const step = this._velocity * (deltaTime / 1000);
         remainingDistance -= step;
 
         // Check if we've overshot
@@ -225,7 +260,7 @@ export class Robot {
           (distance > 0 && remainingDistance < 0) ||
           (distance < 0 && remainingDistance > 0)
         ) {
-          this.velocity = 0;
+          this._velocity = 0;
           resolve();
           return;
         }
@@ -236,13 +271,13 @@ export class Robot {
   }
 
   public async turnRight(degrees: number): Promise<void> {
-    this.turnRate = 90; // 90 degrees per second
+    this._turnRate = 90; // 90 degrees per second
     return new Promise((resolve) => {
-      const targetAngle = this.normalizeAngle(this.angle + degrees);
+      const targetAngle = this.normalizeAngle(this._angle + degrees);
       const checkAngle = () => {
-        if (Math.abs(this.angle - targetAngle) <= 1) {
-          this.turnRate = 0;
-          this.angle = targetAngle;
+        if (Math.abs(this._angle - targetAngle) <= 1) {
+          this._turnRate = 0;
+          this._angle = targetAngle;
           resolve();
         } else {
           requestAnimationFrame(checkAngle);
@@ -257,13 +292,13 @@ export class Robot {
   }
 
   public async turnRadarRight(degrees: number): Promise<void> {
-    this.radarTurnRate = 180; // 180 degrees per second
+    this._radarTurnRate = 180; // 180 degrees per second
     return new Promise((resolve) => {
-      const targetAngle = this.normalizeAngle(this.radarAngle + degrees);
+      const targetAngle = this.normalizeAngle(this._radarAngle + degrees);
       const checkAngle = () => {
-        if (Math.abs(this.radarAngle - targetAngle) <= 1) {
-          this.radarTurnRate = 0;
-          this.radarAngle = targetAngle;
+        if (Math.abs(this._radarAngle - targetAngle) <= 1) {
+          this._radarTurnRate = 0;
+          this._radarAngle = targetAngle;
           resolve();
         } else {
           requestAnimationFrame(checkAngle);
@@ -280,12 +315,12 @@ export class Robot {
   public fire(power: number): void {
     console.log("Firing", power);
     const now = Date.now();
-    if (this.energy >= power * 10 && now - this.lastShot >= this.gunCooldown) {
+    if (this._energy >= power * 10 && now - this.lastShot >= this.gunCooldown) {
       const bullet = new Bullet(this, power);
       if (this.game) {
         this.game.addBullet(bullet);
       }
-      this.energy -= power * 10;
+      this._energy -= power * 10;
       this.lastShot = now;
     } else {
       console.log("Not enough energy to fire");
@@ -304,11 +339,11 @@ export class Robot {
 
     otherRobots.forEach((robot) => {
       // Calculate angle to robot
-      const dx = robot.x - this.x;
-      const dy = robot.y - this.y;
+      const dx = robot.x - this._x;
+      const dy = robot.y - this._y;
       const distance = Math.sqrt(dx * dx + dy * dy);
       const angle = this.normalizeAngle(
-        (Math.atan2(dy, dx) * 180) / Math.PI - this.radarAngle
+        (Math.atan2(dy, dx) * 180) / Math.PI - this._radarAngle
       );
 
       // Check if robot is within radar range and arc
@@ -367,17 +402,26 @@ export class Robot {
   }
 
   public storePreviousPosition(): void {
-    this.prevX = this.x;
-    this.prevY = this.y;
+    this.prevX = this._x;
+    this.prevY = this._y;
   }
 
   public resetToStoredPosition(): void {
-    this.x = this.prevX;
-    this.y = this.prevY;
+    this._x = this.prevX;
+    this._y = this.prevY;
   }
 
   private normalizeAngle(angle: number): number {
     angle = angle % 360;
     return angle < 0 ? angle + 360 : angle;
+  }
+
+  public setPosition(x: number, y: number): void {
+    this._x = x;
+    this._y = y;
+  }
+
+  public stop(): void {
+    this._velocity = 0;
   }
 }
