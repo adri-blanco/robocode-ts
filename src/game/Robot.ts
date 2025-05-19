@@ -185,6 +185,15 @@ export class Robot {
       this.radius * 2
     );
 
+    // Draw direction arrow
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(this.radius + 5, 0); // Arrow tip
+    ctx.lineTo(this.radius - 5, -5); // Top base
+    ctx.lineTo(this.radius - 5, 5); // Bottom base
+    ctx.closePath();
+    ctx.fill();
+
     // Gun
     ctx.rotate(((this._gunAngle - this._angle) * Math.PI) / 180);
     ctx.fillStyle = "#34495e";
