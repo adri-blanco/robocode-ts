@@ -62,6 +62,8 @@ export interface Robot {
   turnLeft(degrees: number): Promise<void>;
   turnRadarRight(degrees: number): Promise<void>;
   turnRadarLeft(degrees: number): Promise<void>;
+  turnGunRight(degrees: number): Promise<void>;
+  turnGunLeft(degrees: number): Promise<void>;
   fire(power: number): void;
   scan(): ScannedRobotInfo[];
   damage(amount: number): void;
