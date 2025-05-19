@@ -288,7 +288,20 @@ export class Robot {
   }
 
   public async turnLeft(degrees: number): Promise<void> {
-    return this.turnRight(-degrees);
+    this._turnRate = -90; // -90 degrees per second for left turn
+    return new Promise((resolve) => {
+      const targetAngle = this.normalizeAngle(this._angle - degrees);
+      const checkAngle = () => {
+        if (Math.abs(this._angle - targetAngle) <= 1) {
+          this._turnRate = 0;
+          this._angle = targetAngle;
+          resolve();
+        } else {
+          requestAnimationFrame(checkAngle);
+        }
+      };
+      checkAngle();
+    });
   }
 
   public async turnRadarRight(degrees: number): Promise<void> {
