@@ -51,9 +51,6 @@ window.addEventListener("load", () => {
   const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
   const game = new Game(canvas);
 
-  // Set up the code editor
-  const editor = setupEditor();
-
   // Add event listeners for game controls
   document.getElementById("startBattle")?.addEventListener("click", () => {
     game.start();
@@ -140,6 +137,7 @@ window.addEventListener("load", () => {
     });
   }
 
+  updateRobotStats();
   // Start the game loop
   game.onUpdate = updateRobotStats;
   game.initialize();
