@@ -15,6 +15,7 @@ export class Game implements GameType {
   private readonly collisionDamage: number = 0.5; // Damage per velocity unit
   private readonly minCollisionDamage: number = 2;
   private readonly maxCollisionDamage: number = 20;
+  private readonly deadRobots: string[] = [];
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -105,6 +106,22 @@ export class Game implements GameType {
 
       return true;
     });
+
+    this.robots.forEach((robot, i) => {
+      if (robot.health <= 0) {
+        if (!this.deadRobots.includes(robot.name)) {
+          this.robots[i].name =
+            "[" +
+            (this.robots.length - 1 - this.deadRobots.length) +
+            "]" +
+            robot.name +
+            " (DEAD)";
+          this.deadRobots.push(robot.name);
+        }
+      }
+    });
+
+    // this.robots = this.robots.filter((robot) => robot.health > 0);
 
     // Check for game over
     const activeBots = this.robots.filter((robot) => robot.health > 0);
