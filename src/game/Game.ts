@@ -307,7 +307,7 @@ export class Game implements GameType {
       let newX = robot.x;
       let newY = robot.y;
 
-      const buffer = 4;
+      const buffer = 10;
       if (robot.x - robot.radius < 0) {
         newX = robot.radius + buffer; // Add small buffer
         robot.onHitWall("left");

@@ -402,7 +402,37 @@ export class Robot {
     if (normalizedDiff > 0) {
       return this.turnGunRight(normalizedDiff);
     } else {
-      return this.turnGunLeft(normalizedDiff);
+      return this.turnGunLeft(-normalizedDiff);
+    }
+  }
+
+  public radarTo(angle: number, offset: number = 0): Promise<void> {
+    const absoluteAngle = this.radarAngle + angle;
+    const angleDiff = absoluteAngle - this.radarAngle;
+    const normalizedDiff = ((angleDiff + 180) % 360) - 180;
+
+    if (normalizedDiff > 0) {
+      return this.turnRadarRight(normalizedDiff);
+    } else {
+      return this.turnRadarLeft(-normalizedDiff);
+    }
+  }
+
+  public rotateTo(angle: number, offset: number = 0): Promise<void> {
+    // Calculate absolute angle to target by adding the relative angle to current radar angle
+    const absoluteAngle = this.radarAngle + angle;
+
+    // Calculate the angle difference between gun and target
+    const angleDiff = absoluteAngle - this.angle;
+
+    // Normalize the angle difference to be between -180 and 180 degrees
+    const normalizedDiff = ((angleDiff + 180) % 360) - 180;
+
+    // Turn the gun towards the target
+    if (normalizedDiff > 0) {
+      return this.turnRight(normalizedDiff);
+    } else {
+      return this.turnLeft(-normalizedDiff);
     }
   }
 
