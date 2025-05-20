@@ -1,9 +1,12 @@
 import { Game } from "./game/Game.js";
 import { Robot } from "./game/Robot.js";
-import { setupEditor, compileRobotScript } from "./editor/editor.js";
+import { DefensiveRobot } from "./robots/DefensiveRobot.js";
+import { KamikazeRobot } from "./robots/KamikazeRobot.js";
 import { MyFirstRobot } from "./robots/MyFirstRobot.js";
-import { HunterAI } from "./robots/HunterAI.js";
-import { RobotAI } from "./types/RobotTypes.js";
+import { PatrolRobot } from "./robots/PatrolRobot.js";
+import { SniperRobot } from "./robots/SniperRobot.js";
+import { SniperV2Robot } from "./robots/SniperV2Robot.js";
+import { SpinnerRobot } from "./robots/SpinnerRobot.js";
 
 // Function to generate random position within canvas bounds
 function getRandomPosition(
@@ -67,30 +70,35 @@ window.addEventListener("load", () => {
   // Create sample robots with different strategies
   const robotConfigs = [
     {
-      name: "Hunter Bot",
+      name: "Patrol Bot",
       color: "#e056fd",
-      ai: HunterAI,
+      ai: PatrolRobot,
+    },
+    {
+      name: "Spinner Bot",
+      color: "#3428da",
+      ai: SpinnerRobot,
+    },
+    {
+      name: "Sniper v2 Bot",
+      color: "#3498db",
+      ai: SniperV2Robot,
     },
     // {
-    //   name: "Spinner Bot",
-    //   color: "#3498db",
-    //   ai: SpinnerAI,
-    // },
-    // {
-    //   name: "Walls Bot",
+    //   name: "Defensive Bot",
     //   color: "#e74c3c",
-    //   ai: WallsAI,
+    //   ai: DefensiveRobot,
     // },
-    // {
-    //   name: "Tracker Bot",
-    //   color: "#2ecc71",
-    //   ai: TrackerAI,
-    // },
-    // {
-    //   name: "Random Bot",
-    //   color: "#9b59b6",
-    //   ai: RandomAI,
-    // },
+    {
+      name: "Kamikaze Bot",
+      color: "#2ecc71",
+      ai: KamikazeRobot,
+    },
+    {
+      name: "Sniper Bot",
+      color: "#9b59b6",
+      ai: SniperRobot,
+    },
     {
       name: "Weich 2",
       color: "#845932",
