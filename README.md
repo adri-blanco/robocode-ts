@@ -1,19 +1,17 @@
-# Robocode JS
+# Robocode TS
 
-A JavaScript implementation of the classic programming game Robocode. Program your robot tank to battle against other robots in a virtual arena!
+A JavaScript/Typescript implementation of the classic programming game Robocode. Program your robot tank to battle against other robots in a virtual arena!
 
 ## Features
 
 - Modern web-based implementation
 - Real-time battles
-- Code editor with syntax highlighting
 - Robot API similar to the original Robocode
 - Health and energy systems
 - Bullet physics and damage calculation
 - Radar system for enemy detection
 - Advanced collision detection and handling
 - Energy management system
-- Battle statistics tracking
 
 ## Getting Started
 
@@ -26,10 +24,10 @@ npm install
 2. Start the development server:
 
 ```bash
-npm start
+npm run dev
 ```
 
-3. Open your browser and navigate to `http://localhost:8080`
+3. Open your browser and navigate to `http://localhost:8085`
 
 ## Programming Your Robot
 
@@ -65,6 +63,11 @@ class RobotAI {
   onRobotCollision(robot) {
     // Called when colliding with another robot
   }
+
+  onHitWall(wall: "top" | "right" | "bottom" | "left"): void {
+    // Called when hitting a wall
+    this.robot.turnRight(90);
+  }
 }
 ```
 
@@ -76,7 +79,7 @@ class RobotAI {
 - `turnRadarRight(degrees)`: Turn radar right by specified degrees
 - `turnRadarLeft(degrees)`: Turn radar left by specified degrees
 - `fire(power)`: Fire a bullet with specified power (0.1 to 3.0)
-- `scan()`: Actively scan for other robots within radar range
+- `aimTo(angle, offset = 0)`: Move the gun to an specific angle
 
 ### Robot Properties
 
@@ -123,3 +126,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Original Robocode by Mathew A. Nelson and Flemming N. Larsen
 - Inspired by the classic Java version of Robocode
+- Dev process improved by Cursor
