@@ -112,14 +112,27 @@ export class Game implements GameType {
         if (!this.deadRobots.includes(robot.name)) {
           this.robots[i].name =
             "[" +
-            (this.robots.length - 1 - this.deadRobots.length) +
-            "]" +
+            (this.robots.length - this.deadRobots.length) +
+            "] " +
             robot.name +
             " (DEAD)";
           this.deadRobots.push(robot.name);
         }
       }
     });
+
+    if (this.deadRobots.length === this.robots.length - 1) {
+      this.robots.forEach((robot, i) => {
+        if (robot.health > 0) {
+          this.robots[i].name =
+            "[" +
+            (this.robots.length - this.deadRobots.length) +
+            "] " +
+            robot.name +
+            " (WINNER)";
+        }
+      });
+    }
 
     // this.robots = this.robots.filter((robot) => robot.health > 0);
 
