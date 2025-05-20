@@ -294,25 +294,29 @@ export class Game implements GameType {
       let newX = robot.x;
       let newY = robot.y;
 
+      const buffer = 4;
       if (robot.x - robot.radius < 0) {
-        newX = robot.radius;
+        newX = robot.radius + buffer; // Add small buffer
         robot.onHitWall("left");
       } else if (robot.x + robot.radius > this.canvas.width) {
-        newX = this.canvas.width - robot.radius;
+        newX = this.canvas.width - robot.radius - buffer; // Add small buffer
         robot.onHitWall("right");
       }
 
       if (robot.y - robot.radius < 0) {
-        newY = robot.radius;
+        newY = robot.radius + buffer; // Add small buffer
         robot.onHitWall("top");
       } else if (robot.y + robot.radius > this.canvas.height) {
-        newY = this.canvas.height - robot.radius;
+        newY = this.canvas.height - robot.radius - buffer; // Add small buffer
         robot.onHitWall("bottom");
       }
 
       // Update position and stop the robot
       robot.setPosition(newX, newY);
       robot.stop();
+
+      // Store the new position as the previous position to prevent getting stuck
+      robot.storePreviousPosition();
     }
   }
 
