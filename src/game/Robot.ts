@@ -145,14 +145,16 @@ export class Robot {
       this._energy + (deltaTime / 1000) * 10
     );
 
-    // Execute AI script if available
+    // Execute AI script if available and not in motion
     if (this.script && !this.inMotion) {
       try {
         this.inMotion = true;
         await this.script.tick(deltaTime);
-        this.inMotion = false;
       } catch (error) {
         console.error(`Error in robot ${this.name} script:`, error);
+      } finally {
+        // Always reset inMotion flag after tick completes or fails
+        this.inMotion = false;
       }
     }
   }
@@ -386,6 +388,24 @@ export class Robot {
     });
   }
 
+  public aimTo(angle: number, offset: number = 0): Promise<void> {
+    // Calculate absolute angle to target by adding the relative angle to current radar angle
+    const absoluteAngle = this.radarAngle + angle;
+
+    // Calculate the angle difference between gun and target
+    const gunAngleDiff = absoluteAngle - this.gunAngle;
+
+    // Normalize the angle difference to be between -180 and 180 degrees
+    const normalizedDiff = ((gunAngleDiff + 180) % 360) - 180;
+
+    // Turn the gun towards the target
+    if (normalizedDiff > 0) {
+      return this.turnGunRight(normalizedDiff);
+    } else {
+      return this.turnGunLeft(normalizedDiff);
+    }
+  }
+
   public fire(power: number): void {
     const now = Date.now();
     if (now - this.lastShot < this.gunCooldown || power < 0) {
@@ -500,5 +520,6 @@ export class Robot {
 
   public stop(): void {
     this._velocity = 0;
+    this.inMotion = false;
   }
 }

@@ -75,6 +75,7 @@ export interface Robot {
   onRobotCollision(robot: Robot): void;
   onHitWall(wall: "top" | "right" | "bottom" | "left"): void;
   getLastCollision(): Robot | null;
+  aimTo(angle: number, offset?: number): Promise<void>;
 }
 
 export interface Game {
