@@ -64,6 +64,7 @@ export class Robot {
   public readonly gunCooldown: number = 500; // milliseconds
   public readonly radarWidth: number = 45; // degrees
   public readonly radarRange: number = 400; // pixels
+  public readonly angleAcceptanceError: number = 1.5; // degrees
 
   // Collision tracking
   private prevX: number;
@@ -78,8 +79,6 @@ export class Robot {
   // AI script context
   public script: RobotAI | null = null;
   public inMotion: boolean = false;
-
-  private lastMotionTime: number = 0;
 
   constructor(name: string, config: RobotConfig) {
     this.name = name;
@@ -150,18 +149,11 @@ export class Robot {
     // Execute AI script if available and not in motion
     if (this.script && !this.inMotion) {
       try {
-        this.lastMotionTime = Date.now();
         this.inMotion = true;
         await this.script.tick(deltaTime);
       } catch (error) {
         console.error(`Error in robot ${this.name} script:`, error);
       } finally {
-        // Always reset inMotion flag after tick completes or fails
-        this.inMotion = false;
-      }
-    } else {
-      if (Date.now() - this.lastMotionTime > 3000) {
-        console.log("RESET MOTION", this.name);
         this.inMotion = false;
       }
     }
@@ -272,6 +264,7 @@ export class Robot {
     let lastTime = performance.now();
     return new Promise((resolve) => {
       const checkDistance = () => {
+        this._velocity = distance > 0 ? 100 : -100;
         const currentTime = performance.now();
         const deltaTime = currentTime - lastTime;
         lastTime = currentTime;
@@ -295,11 +288,11 @@ export class Robot {
   }
 
   public async turnRight(degrees: number): Promise<void> {
-    this._turnRate = 90; // 90 degrees per second
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._angle + degrees);
       const checkAngle = () => {
-        if (Math.abs(this._angle - targetAngle) <= 1) {
+        this._turnRate = 90;
+        if (Math.abs(this._angle - targetAngle) <= this.angleAcceptanceError) {
           this._turnRate = 0;
           this._angle = targetAngle;
           resolve();
@@ -312,11 +305,11 @@ export class Robot {
   }
 
   public async turnLeft(degrees: number): Promise<void> {
-    this._turnRate = -90; // -90 degrees per second for left turn
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._angle - degrees);
       const checkAngle = () => {
-        if (Math.abs(this._angle - targetAngle) <= 1) {
+        this._turnRate = -90;
+        if (Math.abs(this._angle - targetAngle) <= this.angleAcceptanceError) {
           this._turnRate = 0;
           this._angle = targetAngle;
           resolve();
@@ -329,11 +322,13 @@ export class Robot {
   }
 
   public async turnRadarRight(degrees: number): Promise<void> {
-    this._radarTurnRate = 180; // 180 degrees per second
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._radarAngle + degrees);
       const checkAngle = () => {
-        if (Math.abs(this._radarAngle - targetAngle) <= 1) {
+        this._radarTurnRate = 180;
+        if (
+          Math.abs(this._radarAngle - targetAngle) <= this.angleAcceptanceError
+        ) {
           this._radarTurnRate = 0;
           this._radarAngle = targetAngle;
           resolve();
@@ -346,11 +341,13 @@ export class Robot {
   }
 
   public async turnRadarLeft(degrees: number): Promise<void> {
-    this._radarTurnRate = -180; // 180 degrees per second
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._radarAngle - degrees);
       const checkAngle = () => {
-        if (Math.abs(this._radarAngle - targetAngle) <= 1) {
+        this._radarTurnRate = -180;
+        if (
+          Math.abs(this._radarAngle - targetAngle) <= this.angleAcceptanceError
+        ) {
           this._radarTurnRate = 0;
           this._radarAngle = targetAngle;
           resolve();
@@ -363,11 +360,13 @@ export class Robot {
   }
 
   public async turnGunRight(degrees: number): Promise<void> {
-    this._gunTurnRate = 180; // 180 degrees per second
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._gunAngle + degrees);
       const checkAngle = () => {
-        if (Math.abs(this._gunAngle - targetAngle) <= 1) {
+        this._gunTurnRate = 180;
+        if (
+          Math.abs(this._gunAngle - targetAngle) <= this.angleAcceptanceError
+        ) {
           this._gunTurnRate = 0;
           this._gunAngle = targetAngle;
           resolve();
@@ -380,11 +379,13 @@ export class Robot {
   }
 
   public async turnGunLeft(degrees: number): Promise<void> {
-    this._gunTurnRate = -180; // 180 degrees per second
     return new Promise((resolve) => {
       const targetAngle = this.normalizeAngle(this._gunAngle - degrees);
       const checkAngle = () => {
-        if (Math.abs(this._gunAngle - targetAngle) <= 1) {
+        this._gunTurnRate = -180;
+        if (
+          Math.abs(this._gunAngle - targetAngle) <= this.angleAcceptanceError
+        ) {
           this._gunTurnRate = 0;
           this._gunAngle = targetAngle;
           resolve();
