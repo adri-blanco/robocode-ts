@@ -160,7 +160,13 @@ export class Robot {
   }
 
   public render(ctx: CanvasRenderingContext2D): void {
-    if (this._health <= 0) return;
+    if (this._health <= 0) {
+      if (this._x !== -100) {
+        this._x = -100;
+        this._y = -100;
+      }
+      return;
+    }
 
     ctx.save();
 
