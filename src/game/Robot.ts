@@ -79,6 +79,8 @@ export class Robot {
   public script: RobotAI | null = null;
   public inMotion: boolean = false;
 
+  private lastMotionTime: number = 0;
+
   constructor(name: string, config: RobotConfig) {
     this.name = name;
     this._x = config.x;
@@ -148,12 +150,18 @@ export class Robot {
     // Execute AI script if available and not in motion
     if (this.script && !this.inMotion) {
       try {
+        this.lastMotionTime = Date.now();
         this.inMotion = true;
         await this.script.tick(deltaTime);
       } catch (error) {
         console.error(`Error in robot ${this.name} script:`, error);
       } finally {
         // Always reset inMotion flag after tick completes or fails
+        this.inMotion = false;
+      }
+    } else {
+      if (Date.now() - this.lastMotionTime > 3000) {
+        console.log("RESET MOTION", this.name);
         this.inMotion = false;
       }
     }
@@ -449,8 +457,6 @@ export class Robot {
       }
       this._energy -= power;
       this.lastShot = now;
-    } else {
-      console.log("Not enough energy to fire");
     }
   }
 

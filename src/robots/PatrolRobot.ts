@@ -18,7 +18,6 @@ export class PatrolRobot implements RobotAI {
   }
 
   async tick(deltaTime: number): Promise<void> {
-    console.log("🚀 ~ PatrolRobot ~ tick ~ tick");
     const now = Date.now();
     if (now - this.lastScanTime < this.scanInterval) {
       return;
@@ -34,7 +33,7 @@ export class PatrolRobot implements RobotAI {
 
       // Shoot if in range
       if (distance < 200) {
-        this.robot.fire(3);
+        await this.robot.fire(3);
       }
 
       // Move towards target if far from home

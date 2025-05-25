@@ -7,6 +7,8 @@ import { PatrolRobot } from "./robots/PatrolRobot.js";
 import { SniperRobot } from "./robots/SniperRobot.js";
 import { SniperV2Robot } from "./robots/SniperV2Robot.js";
 import { SpinnerRobot } from "./robots/SpinnerRobot.js";
+import { FocusRobot } from "./robots/FocusRobot.js";
+import { RobotConfig } from "./types/RobotTypes";
 
 // Function to generate random position within canvas bounds
 function getRandomPosition(
@@ -77,32 +79,37 @@ window.addEventListener("load", () => {
     {
       name: "Spinner Bot",
       color: "#3428da",
-      ai: SpinnerRobot,
+      ai: FocusRobot,
     },
     {
       name: "Sniper v2 Bot",
       color: "#3498db",
-      ai: SniperV2Robot,
+      ai: FocusRobot,
     },
-    // {
-    //   name: "Defensive Bot",
-    //   color: "#e74c3c",
-    //   ai: DefensiveRobot,
-    // },
+    {
+      name: "Defensive Bot",
+      color: "#e74c3c",
+      ai: FocusRobot,
+    },
     {
       name: "Kamikaze Bot",
       color: "#2ecc71",
-      ai: KamikazeRobot,
+      ai: FocusRobot,
     },
     {
       name: "Sniper Bot",
       color: "#9b59b6",
-      ai: SniperRobot,
+      ai: FocusRobot,
     },
     {
       name: "Weich 2",
       color: "#845932",
-      ai: MyFirstRobot,
+      ai: FocusRobot,
+    },
+    {
+      name: "Focus Bot",
+      color: "#145932",
+      ai: FocusRobot,
     },
   ] as const;
 
